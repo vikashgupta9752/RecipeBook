@@ -226,7 +226,7 @@ const Layout = () => {
 
                 {/* MAIN */}
                 <main className="flex-1 overflow-y-auto bg-stone-50 dark:bg-stone-950">
-                    <Outlet context={{ searchQuery, dietaryFilter }} />
+                    <Outlet context={{ searchQuery, setSearchQuery, dietaryFilter }} />
                 </main>
 
             </div>

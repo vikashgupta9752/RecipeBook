@@ -3,6 +3,8 @@ import { ArrowRight, Heart, Clock, Flame, ChefHat, Star, MessageCircle, Users, E
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import api from '../services/api';
+import NutritionCard from './NutritionCard';
+import { Play, Youtube } from 'lucide-react';
 
 const RecipeDetail = ({ recipe, onBack, onUpdate, backLabel = 'Back' }) => {
     const { user } = useContext(AuthContext);
@@ -380,16 +382,17 @@ const RecipeDetail = ({ recipe, onBack, onUpdate, backLabel = 'Back' }) => {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-4 mb-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                             {[
-                                { label: 'Time', val: `${localRecipe.timeMinutes || 0} min`, icon: <Clock size={18} /> },
-                                { label: 'Calories', val: localRecipe.calories, icon: <Flame size={18} /> },
-                                { label: 'Difficulty', val: localRecipe.difficulty, icon: <ChefHat size={18} /> }
+                                { label: 'Prep', val: `${localRecipe.prepTime || 0}m`, icon: <Clock size={16} /> },
+                                { label: 'Cook', val: `${localRecipe.cookTime || 0}m`, icon: <ChefHat size={16} /> },
+                                { label: 'Total', val: `${localRecipe.timeMinutes || 0}m`, icon: <Flame size={16} /> },
+                                { label: 'Difficulty', val: localRecipe.difficulty, icon: <Star size={16} /> }
                             ].map((stat, i) => (
-                                <div key={i} className="flex flex-col items-center p-4 rounded-2xl bg-orange-50 dark:bg-orange-900/20 text-orange-800 dark:text-orange-200">
-                                    {stat.icon}
-                                    <span className="font-bold mt-1">{stat.val}</span>
-                                    <span className="text-xs opacity-70">{stat.label}</span>
+                                <div key={i} className="flex flex-col items-center p-3 rounded-2xl bg-white dark:bg-stone-800 border border-stone-100 dark:border-stone-700 shadow-sm transition-all hover:shadow-md">
+                                    <div className="text-orange-500 mb-1">{stat.icon}</div>
+                                    <span className="font-bold text-stone-800 dark:text-stone-100">{stat.val}</span>
+                                    <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider font-medium">{stat.label}</span>
                                 </div>
                             ))}
                         </div>
@@ -409,20 +412,53 @@ const RecipeDetail = ({ recipe, onBack, onUpdate, backLabel = 'Back' }) => {
                             </div>
                         </div>
 
+                        {/* VIDEO SECTION */}
+                        {localRecipe.videoUrl && (
+                            <div className="mt-6 mb-8">
+                                <h3 className="text-lg font-bold text-stone-800 dark:text-stone-100 mb-4 flex items-center gap-2">
+                                    <Play size={18} className="text-red-500" />
+                                    Watch Video Tutorial
+                                </h3>
+                                <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-xl border border-stone-200 dark:border-stone-800 bg-black">
+                                    {/* Detect if YouTube link */}
+                                    {localRecipe.videoUrl.includes('youtube.com') || localRecipe.videoUrl.includes('youtu.be') ? (
+                                        <iframe
+                                            width="100%"
+                                            height="100%"
+                                            src={`https://www.youtube.com/embed/${localRecipe.videoUrl.split('v=')[1] || localRecipe.videoUrl.split('/').pop()}`}
+                                            title="YouTube video player"
+                                            frameBorder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                        />
+                                    ) : (
+                                        <video
+                                            src={localRecipe.videoUrl}
+                                            controls
+                                            className="w-full h-full object-contain"
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Fork Button */}
                         <button
                             onClick={handleFork}
-                            className="w-full mt-auto flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all font-medium shadow-lg hover:shadow-xl"
+                            className="w-full mt-auto flex items-center justify-center gap-2 px-6 py-4 bg-stone-900 dark:bg-white text-white dark:text-stone-900 rounded-2xl hover:bg-orange-500 dark:hover:bg-orange-500 dark:hover:text-white transition-all font-bold shadow-lg hover:shadow-2xl active:scale-95"
                         >
                             <GitFork size={20} />
-                            Fork Recipe
-                            {localRecipe.forkCount > 0 && (
-                                <span className="ml-2 px-2 py-0.5 bg-white/20 rounded-full text-xs">
-                                    {localRecipe.forkCount} forks
-                                </span>
-                            )}
+                            Fork this Recipe
                         </button>
                     </div>
+                </div>
+
+                {/* NUTRITION & INGREDIENTS/STEPS */}
+                <div className="mb-12">
+                    <NutritionCard 
+                        nutrition={localRecipe.nutrition} 
+                        calories={localRecipe.calories}
+                    />
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-8">

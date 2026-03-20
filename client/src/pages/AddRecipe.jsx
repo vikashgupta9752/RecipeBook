@@ -23,6 +23,15 @@ const AddRecipe = () => {
     dietaryTags: [],
     images: [],
     servings: 1,
+    prepTime: '',
+    cookTime: '',
+    nutrition: {
+      protein: '',
+      carbs: '',
+      fat: '',
+      fiber: ''
+    },
+    videoUrl: '',
     ingredients: [{ quantity: '', unit: '', name: '' }],
     steps: [{ text: '', timeMinutes: '', image: '' }],
     isPublic: true,
@@ -57,6 +66,10 @@ const AddRecipe = () => {
             dietaryTags: recipe.dietaryTags || [],
             images: recipe.images || [],
             servings: recipe.servings || 1,
+            prepTime: recipe.prepTime || '',
+            cookTime: recipe.cookTime || '',
+            nutrition: recipe.nutrition || { protein: '', carbs: '', fat: '', fiber: '' },
+            videoUrl: recipe.videoUrl || '',
             ingredients: recipe.ingredients.length > 0 ? recipe.ingredients : [{ quantity: '', unit: '', name: '' }],
             steps: recipe.steps.length > 0 ? recipe.steps : [{ text: '', timeMinutes: '', image: '' }],
             isPublic: recipe.isPublic ?? true,
@@ -89,6 +102,13 @@ const AddRecipe = () => {
     const newSteps = [...formData.steps];
     newSteps[index][field] = value;
     setFormData({ ...formData, steps: newSteps });
+  };
+
+  const handleNutritionChange = (field, value) => {
+    setFormData({
+      ...formData,
+      nutrition: { ...formData.nutrition, [field]: value }
+    });
   };
 
   const addIngredient = () => {
@@ -310,7 +330,35 @@ const AddRecipe = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
-                    <div className="flex items-center gap-1"><Clock size={16}/> Prep Time (min) *</div>
+                    <div className="flex items-center gap-1"><Clock size={16}/> Prep Time (min)</div>
+                </label>
+                <input
+                  type="number"
+                  name="prepTime"
+                  value={formData.prepTime}
+                  onChange={handleChange}
+                  placeholder="e.g. 15"
+                  className="w-full px-4 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-100 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
+                    <div className="flex items-center gap-1"><ChefHat size={16}/> Cook Time (min)</div>
+                </label>
+                <input
+                  type="number"
+                  name="cookTime"
+                  value={formData.cookTime}
+                  onChange={handleChange}
+                  placeholder="e.g. 15"
+                  className="w-full px-4 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-100 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
+                    <div className="flex items-center gap-1"><Flame size={16}/> Total Time (min) *</div>
                 </label>
                 <input
                   type="number"
@@ -370,9 +418,22 @@ const AddRecipe = () => {
               </div>
             </div>
 
-            {/* Cuisine */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="col-span-2">
+            {/* Video & Cuisine */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2 flex items-center gap-2">
+                    <Play size={16} className="text-red-500" /> Video URL (YouTube/Direct)
+                </label>
+                <input
+                  type="text"
+                  name="videoUrl"
+                  value={formData.videoUrl}
+                  onChange={handleChange}
+                  placeholder="https://youtube.com/watch?v=..."
+                  className="w-full px-4 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-100 outline-none"
+                />
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">🌍 Cuisine</label>
                 <select
                   name="cuisine"
@@ -403,31 +464,76 @@ const AddRecipe = () => {
               </div>
             </div>
 
-            {/* AI & Calories */}
-            <div className="bg-purple-50 dark:bg-purple-900/10 p-4 rounded-2xl border border-purple-100 dark:border-purple-900/30">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-bold text-purple-900 dark:text-purple-300 flex items-center gap-2">
-                        <Sparkles size={20} /> AI Nutrition Calculator
-                    </h3>
-                    <button
-                        type="button"
-                        onClick={handleAIAnalysis}
-                        disabled={isAnalyzing}
-                        className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 disabled:opacity-50 transition-colors"
-                    >
-                        {isAnalyzing ? 'Analyzing...' : 'Auto-Calculate Calories'}
-                    </button>
-                </div>
-                <div className="flex gap-4 items-center">
-                    <label className="text-sm font-medium text-stone-700 dark:text-stone-300">Estimated Calories:</label>
-                    <input
-                        type="number"
-                        name="calories"
-                        value={formData.calories}
-                        onChange={handleChange}
-                        placeholder="e.g. 450"
-                        className="w-32 px-4 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-100 outline-none"
-                    />
+            {/* AI & Nutrition Details */}
+            <div className="space-y-4">
+                <div className="bg-purple-50 dark:bg-purple-900/10 p-4 rounded-2xl border border-purple-100 dark:border-purple-900/30">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="font-bold text-purple-900 dark:text-purple-300 flex items-center gap-2">
+                            <Sparkles size={20} /> AI Nutrition Calculator
+                        </h3>
+                        <button
+                            type="button"
+                            onClick={handleAIAnalysis}
+                            disabled={isAnalyzing}
+                            className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 disabled:opacity-50 transition-colors"
+                        >
+                            {isAnalyzing ? 'Analyzing...' : 'Auto-Calculate Details'}
+                        </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                        <div>
+                            <label className="block text-xs font-bold text-stone-500 mb-1 uppercase tracking-wider">Calories</label>
+                            <input
+                                type="number"
+                                name="calories"
+                                value={formData.calories}
+                                onChange={handleChange}
+                                placeholder="450"
+                                className="w-full px-3 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-100 outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-stone-500 mb-1 uppercase tracking-wider">Protein (g)</label>
+                            <input
+                                type="text"
+                                value={formData.nutrition.protein}
+                                onChange={(e) => handleNutritionChange('protein', e.target.value)}
+                                placeholder="25"
+                                className="w-full px-3 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-100 outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-stone-500 mb-1 uppercase tracking-wider">Carbs (g)</label>
+                            <input
+                                type="text"
+                                value={formData.nutrition.carbs}
+                                onChange={(e) => handleNutritionChange('carbs', e.target.value)}
+                                placeholder="50"
+                                className="w-full px-3 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-100 outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-stone-500 mb-1 uppercase tracking-wider">Fat (g)</label>
+                            <input
+                                type="text"
+                                value={formData.nutrition.fat}
+                                onChange={(e) => handleNutritionChange('fat', e.target.value)}
+                                placeholder="15"
+                                className="w-full px-3 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-100 outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-stone-500 mb-1 uppercase tracking-wider">Fiber (g)</label>
+                            <input
+                                type="text"
+                                value={formData.nutrition.fiber}
+                                onChange={(e) => handleNutritionChange('fiber', e.target.value)}
+                                placeholder="5"
+                                className="w-full px-3 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-100 outline-none"
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
 

@@ -14,7 +14,7 @@ router.post('/analyze-recipe', protect, async (req, res) => {
   }
 
   const prompt = `
-Analyze the following recipe and estimate calories and difficulty.
+Analyze the following recipe and estimate nutrition details, difficulty, and time breakdown.
 
 Ingredients:
 ${ingredients.join(', ')}
@@ -25,7 +25,15 @@ ${instructions.join('\n')}
 Return ONLY valid JSON:
 {
   "calories": "number",
-  "difficulty": "Easy | Medium | Hard"
+  "difficulty": "Easy | Medium | Hard",
+  "prepTime": "number in minutes",
+  "cookTime": "number in minutes",
+  "nutrition": {
+    "protein": "string with unit (g)",
+    "carbs": "string with unit (g)",
+    "fat": "string with unit (g)",
+    "fiber": "string with unit (g)"
+  }
 }
 `;
 

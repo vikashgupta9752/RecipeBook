@@ -20,12 +20,36 @@ const CuisineRecipes = () => {
             setLoading(true);
             try {
                 const res = await api.get('/recipes');
-                // Filter recipes by cuisine tag (case insensitive)
-                const filtered = res.data.filter(r =>
-                    r.tags?.some(tag => tag.toLowerCase() === type.toLowerCase()) ||
-                    r.cuisine?.toLowerCase() === type.toLowerCase() ||
-                    r.description?.toLowerCase().includes(type.toLowerCase())
-                );
+                
+                // Define keyword-to-cuisine mapping for smarter filtering
+                const cuisineKeywords = {
+                    'Italian': ['pasta', 'pizza', 'risotto', 'lasagna', 'spaghetti', 'penne', 'ravioli', 'gnocchi', 'tiramisu', 'bruschetta', 'pesto'],
+                    'Indian': ['paneer', 'curry', 'dal', 'tikka', 'biryani', 'roti', 'naan', 'samosa', 'chutney', 'masala', 'korma', 'aloo', 'gobi'],
+                    'Chinese': ['noodle', 'manchurian', 'dim sum', 'fry rice', 'chow mein', 'spring roll', 'kung pao', 'szechuan'],
+                    'American': ['burger', 'sandwich', 'pancake', 'waffle', 'hot dog', 'steak', 'brownie', 'donut', 'cookie'],
+                    'Mexican': ['taco', 'burrito', 'nacho', 'quesadilla', 'enchilada', 'guacamole', 'salsa', 'fajita'],
+                    'Japanese': ['sushi', 'ramen', 'tempura', 'teriyaki', 'miso', 'udon'],
+                    'French': ['croissant', 'crepe', 'baguette', 'souffle', 'quiche', 'ratatouille'],
+                    'Continental': ['pasta', 'pizza', 'steak', 'salad', 'soup', 'sandwich']
+                };
+
+                const currentCuisine = type.charAt(0).toUpperCase() + type.slice(1);
+                const relevantKeywords = cuisineKeywords[currentCuisine] || [];
+
+                // Filter recipes by cuisine tag, field, description, OR title keywords
+                const filtered = res.data.filter(r => {
+                    const matchesExplicit = 
+                        r.tags?.some(tag => tag.toLowerCase() === type.toLowerCase()) ||
+                        r.cuisine?.toLowerCase() === type.toLowerCase() ||
+                        r.description?.toLowerCase().includes(type.toLowerCase());
+                    
+                    if (matchesExplicit) return true;
+
+                    // Keyword matches in title
+                    const titleLower = r.title?.toLowerCase() || '';
+                    return relevantKeywords.some(keyword => titleLower.includes(keyword));
+                });
+
                 setRecipes(filtered);
             } catch (error) {
                 console.error('Error fetching recipes:', error);

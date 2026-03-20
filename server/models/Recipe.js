@@ -57,6 +57,14 @@ const recipeSchema = mongoose.Schema(
             type: Number,
             default: 1,
         },
+        prepTime: {
+            type: Number, // Prep time in minutes
+            default: 0
+        },
+        cookTime: {
+            type: Number, // Cook time in minutes
+            default: 0
+        },
         timeMinutes: {
             type: Number,
             required: [true, 'Please add total time in minutes'],
@@ -90,6 +98,16 @@ const recipeSchema = mongoose.Schema(
         calories: {
             type: Number, // Total estimated calories
             default: 0
+        },
+        nutrition: {
+            protein: { type: String, default: '' },
+            carbs: { type: String, default: '' },
+            fat: { type: String, default: '' },
+            fiber: { type: String, default: '' }
+        },
+        videoUrl: {
+            type: String,
+            default: ''
         },
 
         // Counters for sorting/trending

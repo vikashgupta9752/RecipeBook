@@ -70,36 +70,37 @@ const BentoGrid = ({ recipes, onRecipeClick, isTrending }) => {
                         <div
                             key={recipe._id}
                             onClick={() => onRecipeClick(recipe)}
-                            className={`${spanClass} group relative rounded-3xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 border border-stone-100 dark:border-stone-800 bg-white dark:bg-stone-900`}
+                            className={`${spanClass} group relative rounded-[2rem] overflow-hidden cursor-pointer shadow-md hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 border border-stone-100 dark:border-stone-800 bg-white dark:bg-stone-900 group`}
                         >
                             <img
                                 src={recipe.image}
                                 alt={recipe.title}
-                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${recipe.category === 'Breakfast' ? 'bg-amber-500 text-white' :
-                                        recipe.category === 'Vegetarian' ? 'bg-green-500 text-white' :
-                                            recipe.category === 'Desserts' ? 'bg-pink-500 text-white' :
-                                                'bg-orange-500 text-white'
+                            {/* Glass Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-5 opacity-90 group-hover:opacity-100 transition-opacity">
+                                <div className="flex items-center gap-2 mb-2 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                                    <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg backdrop-blur-md border border-white/20 ${recipe.category === 'Breakfast' ? 'bg-amber-500/80 text-white' :
+                                        recipe.category === 'Vegetarian' ? 'bg-green-500/80 text-white' :
+                                            recipe.category === 'Desserts' ? 'bg-pink-500/80 text-white' :
+                                                'bg-orange-500/80 text-white'
                                         }`}>
                                         {recipe.category}
                                     </span>
-                                    <div className="flex items-center gap-1 text-xs text-white/90 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-full">
+                                    <div className="flex items-center gap-1 text-[10px] font-bold text-white bg-white/10 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
                                         <Star size={10} className="text-yellow-400 fill-yellow-400" />
                                         <span>{recipe.averageRating ? recipe.averageRating.toFixed(1) : 'New'}</span>
                                     </div>
                                 </div>
-                                <h3 className="text-white font-bold text-base md:text-lg mb-1 line-clamp-2 group-hover:text-orange-300 transition-colors">
+                                <h3 className="text-white font-black text-lg md:text-xl mb-2 line-clamp-2 group-hover:text-orange-400 transition-colors leading-tight drop-shadow-lg">
                                     {recipe.title}
                                 </h3>
-                                <div className="flex items-center justify-between text-white/80 text-xs">
-                                    <div className="flex items-center gap-1">
-                                        <Clock size={12} /> {recipe.time}
+                                <div className="flex items-center justify-between text-stone-300 text-xs font-semibold translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                                    <div className="flex items-center gap-1.5 bg-white/10 px-2 py-1 rounded-md">
+                                        <Clock size={12} className="text-orange-400" /> {recipe.timeMinutes || recipe.time || 0}m
                                     </div>
-                                    <div className="flex items-center gap-1">
-                                        <Heart size={12} /> {recipe.likesCount || 0}
+                                    <div className="flex items-center gap-1.5 bg-white/10 px-2 py-1 rounded-md">
+                                        <Heart size={12} className="text-red-400 fill-red-400" /> {recipe.likesCount || 0}
                                     </div>
                                 </div>
                             </div>

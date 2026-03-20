@@ -232,7 +232,8 @@ const createRecipe = async (req, res) => {
     try {
         const {
             title, description, ingredients, steps, timeMinutes, difficulty,
-            calories, images, category, cuisine, tags, dietaryTags, servings, isPublic
+            calories, images, category, cuisine, tags, dietaryTags, servings, isPublic,
+            prepTime, cookTime, nutrition, videoUrl
         } = req.body;
 
         if (!title || !ingredients || !steps) {
@@ -250,8 +251,12 @@ const createRecipe = async (req, res) => {
             ingredients, // Expecting array of objects
             steps, // Expecting array of objects
             timeMinutes: Number(timeMinutes) || 0,
+            prepTime: Number(prepTime) || 0,
+            cookTime: Number(cookTime) || 0,
             difficulty,
             calories: Number(calories) || 0,
+            nutrition: nutrition || { protein: '', carbs: '', fat: '', fiber: '' },
+            videoUrl: videoUrl || '',
             images: images || [],
             image: coverImage,
             category,
