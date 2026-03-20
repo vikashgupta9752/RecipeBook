@@ -28,12 +28,21 @@ const Discover = () => {
             r.category?.toLowerCase().includes(searchQuery.toLowerCase())
             : true;
 
+      const vegTags = ['Vegetarian', 'Vegan'];
+      const vegKeywords = ['veg', 'paneer', 'pasta', 'dal', 'rice', 'salad', 'fruit', 'eggless', 'cheese', 'pizza', 'sandwich', 'burger', 'maggi', 'noodle'];
+      const vegCategories = ['Vegetarian', 'Desserts', 'Salad', 'Breakfast', 'Appetizer'];
+      
+      const isVeg = 
+        r.dietaryTags?.some(tag => vegTags.includes(tag)) || 
+        vegCategories.includes(r.category) ||
+        vegKeywords.some(key => r.title.toLowerCase().includes(key.toLowerCase()));
+
       const matchesDiet =
-  dietaryFilter === 'all'
-    ? true
-    : dietaryFilter === 'veg'
-    ? r.dietaryTags?.includes('veg') || r.dietaryTags?.includes('Vegetarian')
-    : r.dietaryTags?.includes('non-veg');
+        dietaryFilter === 'all'
+          ? true
+          : dietaryFilter === 'veg'
+          ? isVeg
+          : !isVeg;
 
 
         return matchesSearch && matchesDiet;

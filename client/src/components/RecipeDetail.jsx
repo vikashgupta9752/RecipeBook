@@ -367,13 +367,16 @@ const RecipeDetail = ({ recipe, onBack, onUpdate, backLabel = 'Back' }) => {
                         <p className="text-stone-600 dark:text-stone-300 text-lg leading-relaxed mb-6">{localRecipe.description}</p>
 
                         {/* Author info */}
-                        <div className="flex items-center gap-3 mb-6 p-4 bg-stone-50 dark:bg-stone-800 rounded-2xl border border-stone-100 dark:border-stone-700">
-                            <div className="w-10 h-10 bg-stone-200 dark:bg-stone-700 rounded-full flex items-center justify-center overflow-hidden">
+                        <div
+                            className="flex items-center gap-3 mb-6 p-4 bg-stone-50 dark:bg-stone-800 rounded-2xl border border-stone-100 dark:border-stone-700 cursor-pointer hover:border-orange-200 dark:hover:border-orange-800 transition-all"
+                            onClick={() => localRecipe.user?._id && navigate(`/profile/${localRecipe.user._id}`)}
+                        >
+                            <div className="w-10 h-10 bg-stone-200 dark:bg-stone-700 rounded-full flex items-center justify-center overflow-hidden ring-2 ring-transparent hover:ring-orange-300 transition-all">
                                 <img src={localRecipe.user?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${localRecipe.user?.username || 'User'}`} alt="Author" />
                             </div>
                             <div>
                                 <p className="text-sm text-stone-500 dark:text-stone-400">Recipe by</p>
-                                <p className="font-bold text-stone-800 dark:text-stone-200">{localRecipe.user?.username || 'Anonymous'}</p>
+                                <p className="font-bold text-stone-800 dark:text-stone-200 hover:text-orange-600 dark:hover:text-orange-400 transition-colors">{localRecipe.user?.username || 'Anonymous'}</p>
                             </div>
                         </div>
 

@@ -18,6 +18,7 @@ const AddRecipe = () => {
     difficulty: 'Medium',
     calories: '',
     category: 'Main Course',
+    cuisine: 'General',
     tags: [],
     dietaryTags: [],
     images: [],
@@ -34,7 +35,7 @@ const AddRecipe = () => {
   const [loading, setLoading] = useState(false);
 
   const dietaryOptions = [
-    'Vegetarian', 'Vegan', 'Gluten-Free', 'Halal', 'Dairy-Free', 'Nut-Free', 'Low-Carb'
+    'Vegetarian', 'Vegan', 'Non-Veg', 'Gluten-Free', 'Halal', 'Dairy-Free', 'Nut-Free', 'Low-Carb'
   ];
 
   useEffect(() => {
@@ -51,6 +52,7 @@ const AddRecipe = () => {
             difficulty: recipe.difficulty || 'Medium',
             calories: recipe.calories || '',
             category: recipe.category || 'Main Course',
+            cuisine: recipe.cuisine || 'General',
             tags: recipe.tags || [],
             dietaryTags: recipe.dietaryTags || [],
             images: recipe.images || [],
@@ -364,6 +366,39 @@ const AddRecipe = () => {
                   <option value="Appetizer">Appetizer</option>
                   <option value="Soup">Soup</option>
                   <option value="Salad">Salad</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Cuisine */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">🌍 Cuisine</label>
+                <select
+                  name="cuisine"
+                  value={formData.cuisine}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-100 outline-none"
+                >
+                  <option value="General">General</option>
+                  <option value="Indian">Indian</option>
+                  <option value="Chinese">Chinese</option>
+                  <option value="Italian">Italian</option>
+                  <option value="Mexican">Mexican</option>
+                  <option value="Japanese">Japanese</option>
+                  <option value="Thai">Thai</option>
+                  <option value="French">French</option>
+                  <option value="Korean">Korean</option>
+                  <option value="American">American</option>
+                  <option value="Mediterranean">Mediterranean</option>
+                  <option value="Middle Eastern">Middle Eastern</option>
+                  <option value="African">African</option>
+                  <option value="British">British</option>
+                  <option value="Spanish">Spanish</option>
+                  <option value="Vietnamese">Vietnamese</option>
+                  <option value="Greek">Greek</option>
+                  <option value="Caribbean">Caribbean</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
             </div>

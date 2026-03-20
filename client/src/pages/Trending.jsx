@@ -27,11 +27,20 @@ const Trending = () => {
               r.category?.toLowerCase().includes(searchQuery.toLowerCase())
             : true;
         
+        const vegTags = ['Vegetarian', 'Vegan'];
+        const vegKeywords = ['veg', 'paneer', 'pasta', 'dal', 'rice', 'salad', 'fruit', 'eggless', 'cheese', 'pizza', 'sandwich', 'burger', 'maggi', 'noodle', 'veg'];
+        const vegCategories = ['Vegetarian', 'Desserts', 'Salad', 'Breakfast', 'Appetizer'];
+        
+        const isVeg = 
+            r.dietaryTags?.some(tag => vegTags.includes(tag)) || 
+            vegCategories.includes(r.category) ||
+            (r.title && vegKeywords.some(key => r.title.toLowerCase().includes(key.toLowerCase())));
+
         const matchesDiet = dietaryFilter === 'all' 
             ? true 
             : dietaryFilter === 'veg' 
-                ? r.isVegetarian 
-                : !r.isVegetarian;
+                ? isVeg 
+                : !isVeg;
                 
         return matchesSearch && matchesDiet;
     });

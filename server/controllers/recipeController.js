@@ -45,6 +45,47 @@ const getRecipes = async (req, res) => {
     }
 };
 
+// @desc    Get social feed (recipes from followed users + recent popular)
+// @route   GET /api/recipes/feed
+// @access  Private
+const getFeedRecipes = async (req, res) => {
+    try {
+        const currentUser = await User.findById(req.user.id);
+        if (!currentUser) return res.status(404).json({ message: 'User not found' });
+
+        const followingIds = currentUser.following || [];
+
+        // Get recipes from followed users
+        let feedRecipes = await Recipe.find({
+            user: { $in: followingIds },
+            isPublic: true,
+        })
+            .populate('user', 'username avatarUrl bio')
+            .sort({ createdAt: -1 })
+            .limit(50);
+
+        // If not enough, supplement with popular recent recipes
+        if (feedRecipes.length < 10) {
+            const existingIds = feedRecipes.map(r => r._id);
+            const extraRecipes = await Recipe.find({
+                _id: { $nin: existingIds },
+                user: { $ne: req.user.id },
+                isPublic: true,
+            })
+                .populate('user', 'username avatarUrl bio')
+                .sort({ likesCount: -1, createdAt: -1 })
+                .limit(20);
+
+            feedRecipes = [...feedRecipes, ...extraRecipes];
+        }
+
+        res.status(200).json(feedRecipes);
+    } catch (error) {
+        console.error('GET FEED ERROR:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 // @desc    Get trending recipes (Algorithmic)
 // @route   GET /api/recipes/trending
@@ -191,7 +232,7 @@ const createRecipe = async (req, res) => {
     try {
         const {
             title, description, ingredients, steps, timeMinutes, difficulty,
-            calories, images, category, tags, dietaryTags, servings, isPublic
+            calories, images, category, cuisine, tags, dietaryTags, servings, isPublic
         } = req.body;
 
         if (!title || !ingredients || !steps) {
@@ -214,6 +255,7 @@ const createRecipe = async (req, res) => {
             images: images || [],
             image: coverImage,
             category,
+            cuisine,
             tags,
             dietaryTags,
             servings: Number(servings) || 1,
@@ -526,6 +568,7 @@ const rateRecipe = async (req, res) => {
 
 module.exports = {
     getRecipes,
+    getFeedRecipes,
     getTrendingRecipes,
     getRecipe,
     createRecipe,

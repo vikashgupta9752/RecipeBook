@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useOutletContext } from 'react-router-dom';
 import { UtensilsCrossed } from 'lucide-react';
 import BentoGrid from '../components/BentoGrid';
 import api from '../services/api';
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 const CuisineRecipes = () => {
     const { type } = useParams();
+    const { searchQuery, dietaryFilter } = useOutletContext();
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
@@ -35,6 +36,31 @@ const CuisineRecipes = () => {
         fetchRecipes();
     }, [type]);
 
+    const filteredRecipes = recipes.filter(r => {
+        const matchesSearch = searchQuery 
+            ? r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              r.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              r.category?.toLowerCase().includes(searchQuery.toLowerCase())
+            : true;
+        
+        const vegTags = ['Vegetarian', 'Vegan'];
+        const vegKeywords = ['veg', 'paneer', 'pasta', 'dal', 'rice', 'salad', 'fruit', 'eggless', 'cheese', 'pizza', 'sandwich', 'burger', 'maggi', 'noodle'];
+        const vegCategories = ['Vegetarian', 'Desserts', 'Salad', 'Breakfast', 'Appetizer'];
+        
+        const isVeg = 
+            r.dietaryTags?.some(tag => vegTags.includes(tag)) || 
+            vegCategories.includes(r.category) ||
+            (r.title && vegKeywords.some(key => r.title.toLowerCase().includes(key.toLowerCase())));
+
+        const matchesDiet = dietaryFilter === 'all' 
+            ? true 
+            : dietaryFilter === 'veg' 
+                ? isVeg 
+                : !isVeg;
+                
+        return matchesSearch && matchesDiet;
+    });
+
     const handleRecipeClick = (recipe) => {
         navigate(`/recipes/${recipe._id}`);
     };
@@ -50,9 +76,9 @@ const CuisineRecipes = () => {
                 <div className="flex justify-center items-center h-64">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
                 </div>
-            ) : recipes.length > 0 ? (
+            ) : filteredRecipes.length > 0 ? (
                 <BentoGrid
-                    recipes={recipes}
+                    recipes={filteredRecipes}
                     onRecipeClick={handleRecipeClick}
                 />
             ) : (

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
     getRecipes,
+    getFeedRecipes,
     getTrendingRecipes,
     getRecipe,
     createRecipe,
@@ -19,6 +20,7 @@ const { protect, identify } = require('../middleware/authMiddleware');
 
 router.route('/').get(identify, getRecipes).post(protect, createRecipe);
 router.get('/trending', getTrendingRecipes);
+router.get('/feed', protect, getFeedRecipes);
 router.get('/saved', protect, getSavedRecipes);
 
 // Interactions

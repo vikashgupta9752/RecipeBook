@@ -57,8 +57,13 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(port, () => {
-    console.log(`Server started on port ${port}`);
-    console.log('SERVER RESTARTED FOR DEBUGGING - FORCE RESTART');
-});
-// Server running
+/* =========================
+   START SERVER (skip on Vercel)
+========================= */
+if (!process.env.VERCEL) {
+    app.listen(port, () => {
+        console.log(`Server started on port ${port}`);
+    });
+}
+
+module.exports = app;

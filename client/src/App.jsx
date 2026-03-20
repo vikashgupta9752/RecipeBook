@@ -34,6 +34,7 @@ import TVShows from "./pages/TVShows";
 import CuisineRecipes from "./pages/CuisineRecipes";
 import CategoryRecipes from "./pages/CategoryRecipe";
 import ContactUs from "./pages/ContactUs";
+import UserProfile from "./pages/UserProfile";
 import ContactMessages from "./pages/admin/ContactMessages";
 import Feedback from "./pages/admin/Feedback";
 
@@ -146,6 +147,7 @@ const App = () => {
         <Route path="/cuisines/:type" element={<CuisineRecipes />} />
         <Route path="/category/:category" element={<CategoryRecipes />} />
         <Route path="/contact-us" element={<ContactUs />} />
+        <Route path="/profile/:id" element={<UserProfile />} />
 
         {/* Protected inside layout */}
         <Route element={<PrivateRoute />}>
